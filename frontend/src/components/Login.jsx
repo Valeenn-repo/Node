@@ -9,10 +9,22 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 
+import { useNavigate } from 'react-router-dom';
+
+//Importamos el useDispatch del react-redux
+import { useDispatch} from 'react-redux';
+//Importamos el componente loginActions que está en el fichero storelogin.js
+import { loginActions } from '../store/storelogin';
+
+
+
 function LoginService() {
+  
   // Define el estado para el nombre de usuario y la contraseña
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
 const isVerifiedUser = () => {
   if (!username || !password) {
@@ -22,10 +34,19 @@ const isVerifiedUser = () => {
   fetch(`http://localhost:3030/login?user=${username}&password=${password}`)
     .then(response => response.json())
     .then(response => {
-        if (response.data && response.data.nombre && response.data.rol) {
+        if (response && response.data.nombre && response.data.rol) {
             console.log('Autenticación exitosa:');
             console.log('Nombre:', response.data.nombre);
             console.log('Rol:', response.data.rol);
+            if (response.data.nombre !== undefined) {
+              console.log('entro, hago el dispatch y luego navego')
+              //aquí pongo el dispatch para cambiar el estado a login en el store del redux
+              dispatch(loginActions.login({
+                name: response.data.nombre,
+                rol: response.data.rol  
+              }))
+              navigate('/home')
+            }    
           } else {
             console.log('Error de autenticación:', response);
           }
@@ -104,6 +125,7 @@ const handleLogin = (e) => {
     </Grid>
   );
 }
+
 
 export default LoginService;
 
