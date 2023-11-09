@@ -6,7 +6,6 @@
   import Paper from '@mui/material/Paper';
   import AppBar from '@mui/material/AppBar';
   import Toolbar from '@mui/material/Toolbar';
-  import AdbIcon from '@mui/icons-material/Adb';
   import { Link, useNavigate } from 'react-router-dom';
   import { useSelector, useDispatch } from 'react-redux';
   import { loginActions } from '../store/storelogin';
@@ -75,7 +74,40 @@
   }, []);
 
 
-    const realizarCons = () => {
+
+  const realizarCons = () => {
+    const { nombre, marca, tipo, precio } = formValues;
+    console.log(nombre, marca, tipo, precio);
+    const url = `http://localhost:3030/addItem?nombre=${nombre}&marca=${marca}&tipo=${tipo}&precio=${precio}`;
+  
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Datos insertados:', data);
+        alert("Datos insertados con éxito");
+        
+        // Obtener datos actualizados después de la inserción
+        fetch('http://localhost:3030/getItems')
+          .then(response => response.json())
+          .then(data => {
+            console.log("Datos recuperados después de la inserción: ", data);
+            if (Array.isArray(data.data)) {
+              setItems(data.data); // Actualizar 'items' con los datos insertados
+            }
+          })
+          .catch(error => {
+            console.error('Error al obtener los datos después de la inserción:', error);
+            // Manejar errores o mostrar mensajes de error
+          });
+  
+      })
+      .catch(error => {
+        console.error('Error al insertar datos:', error);
+        // Manejar errores o mostrar mensajes de error
+      });
+  };
+  
+    /*const realizarCons = () => {
       const { nombre, marca, tipo, precio } = formValues;
       console.log(nombre, marca, tipo, precio);
       const url = `http://localhost:3030/addItem?nombre=${nombre}&marca=${marca}&tipo=${tipo}&precio=${precio}`;
@@ -93,6 +125,7 @@
           // Manejar errores o mostrar mensajes de error
         });
   };
+*/
 
   const handleDeleteItem = (itemId) => {
     // Realiza una solicitud DELETE al servidor para eliminar el elemento con el ID proporcionado
@@ -195,17 +228,17 @@
         {items.map((item) => (
           <Grid container item spacing={2} key={item.id}>
             <Grid item xs={3}>
-              <Typography variant="body1">{item.nombre}</Typography>
+              <Typography color="secondary" variant="body1">{item.nombre}</Typography>
             </Grid>
             <Grid item xs={3}>
-              <Typography variant="body1">{item.marca}</Typography>
+              <Typography color="secondary" variant="body1">{item.marca}</Typography>
             </Grid>
             <Grid item xs={3}>
-              <Typography variant="body1">{item.tipo}</Typography>
+              <Typography color="secondary" variant="body1">{item.tipo}</Typography>
             </Grid>
             <Grid container item xs={3} alignItems="center" spacing={1}>
               <Grid item xs={8}>
-                <Typography variant="body1">{item.precio}</Typography>
+                <Typography color="secondary" variant="body1">{item.precio}</Typography>
               </Grid>
               <Grid item xs={4}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
