@@ -12,6 +12,7 @@
   import { loginActions } from '../store/storelogin';
   import DeleteIcon from '@mui/icons-material/Delete';
   import Tooltip from '@mui/material/Tooltip';
+  import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 
   function Home() {
     const dispatch = useDispatch();
@@ -116,7 +117,7 @@
             <Toolbar>
               <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item xs={6} sm={2} container alignItems="center">
-                  <AdbIcon />
+                  <PermIdentityIcon/>
                   <Typography variant="h6">{userData.userName}</Typography>
                 </Grid>
                 <Grid item xs={6} sm={6} md={4} lg={4} container justifyContent="space-around">
