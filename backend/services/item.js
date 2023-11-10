@@ -22,7 +22,6 @@ async function getData(req, res) {
     try {
         // Realizar la consulta para obtener datos de la base de datos
         const rows = await db.query('SELECT * FROM coleccion');
-        // Reemplaza 'tabla' con el nombre real de tu tabla en la base de datos.
 
         // Procesar los resultados de la consulta utilizando helper.emptyOrRows
         const data = helper.emptyOrRows(rows);
@@ -48,7 +47,7 @@ async function deleteData(itemId) {
         return result.affectedRows;
     } catch (error) {
         console.error('Error al borrar datos:', error);
-        return 0; // O algún otro manejo de errores o valor de retorno que desees.
+        return 0;
     }
 }
 

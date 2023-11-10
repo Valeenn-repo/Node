@@ -76,8 +76,6 @@ app.get('/getItems', async function(req, res, next) {
     }
 });
 
-// Suponiendo que 'app' es tu aplicación Express y 'db' es tu objeto de base de datos
-
 // Endpoint para eliminar un ítem por su ID
 app.get('/deleteItem', async function(req, res, next){
     try {
