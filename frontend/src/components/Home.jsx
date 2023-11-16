@@ -1,24 +1,23 @@
-  import React, { useState, useEffect } from 'react';
-  import Button from '@mui/material/Button';
-  import { Box, Container, TextField } from '@mui/material';
-  import Typography from '@mui/material/Typography';
-  import Grid from '@mui/material/Grid';
-  import Paper from '@mui/material/Paper';
-  import AppBar from '@mui/material/AppBar';
-  import Toolbar from '@mui/material/Toolbar';
-  import { Link, useNavigate } from 'react-router-dom';
-  import { useSelector, useDispatch } from 'react-redux';
-  import { loginActions } from '../store/storelogin';
-  import DeleteIcon from '@mui/icons-material/Delete';
-  import Tooltip from '@mui/material/Tooltip';
-  import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import React, { useState, useEffect } from 'react';
+import Button from '@mui/material/Button';
+import { Box, TextField } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { useSelector} from 'react-redux';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Tooltip from '@mui/material/Tooltip';
+import TopBar from './TopBar';
 
   function Home() {
+    const userRole = useSelector(state => state.login.userRol);
+
+ /* const userData = useSelector(state => state.login);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userData = useSelector(state => state.login);
     const isLoggedin = userData.isAutenticated;
-
+    
     useEffect(() => {
       if (!isLoggedin) {
         navigate('/');
@@ -29,6 +28,7 @@
       dispatch(loginActions.logout());
       navigate('/');
     };
+*/
 
     const [formValues, setFormValues] = useState({
       nombre: '',
@@ -49,6 +49,14 @@
       event.preventDefault();
       console.log(formValues);
       realizarCons(); // Realizar la solicitud GET con los valores del formulario
+      
+      // Limpiar los campos
+      setFormValues({
+        nombre: '',
+        marca: '',
+        tipo: '',
+        precio: '',
+      });
     };
 
     
@@ -145,18 +153,27 @@
 
     return (
       <>
+      <TopBar/>
+      {/*
         <AppBar position='static'>
           <Container>
             <Toolbar>
               <Grid container justifyContent="space-between" alignItems="center">
                 <Grid item xs={6} sm={2} container alignItems="center">
-                  <PermIdentityIcon/>
+                  {userRole==='user' &&
+                    <PermIdentityIcon/>
+                  }
+                  {userRole==='admin' &&
+                    <AdminPanelSettingsIcon/>
+                  }
+                  
                   <Typography variant="h6">{userData.userName}</Typography>
                 </Grid>
                 <Grid item xs={6} sm={6} md={4} lg={4} container justifyContent="space-around">
                   <Link to='/home'>Inicio</Link>
                   <Link to='/help'>Ayuda</Link>
-                  <Link to='/informs'>Informes</Link>
+                  {userRole==='admin' &&
+                  <Link to='/informes'>Informes</Link>}
                 </Grid>
                 <Grid item xs={6} sm={3} md={2} lg={2} container justifyContent="flex-end">
                   <Button variant="contained" onClick={salir}>Salir</Button>
@@ -165,7 +182,7 @@
             </Toolbar>
           </Container>
         </AppBar>
-        
+                */}
         <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
           <Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
             <Grid container spacing={2}>
@@ -241,14 +258,15 @@
                 <Typography color="secondary" variant="body1">{item.precio}</Typography>
               </Grid>
               <Grid item xs={4}>
+              {userRole==='admin' &&
               <div style={{ display: 'flex', alignItems: 'center' }}>
               <Tooltip title="Eliminar" arrow>
-                <DeleteIcon
+                 <DeleteIcon
                   onClick={() => handleDeleteItem(item.id)}
                   style={{ cursor: 'pointer' }}
                 />
               </Tooltip>
-              </div>
+              </div>}
               </Grid>
             </Grid>
           </Grid>
@@ -259,4 +277,4 @@
     );
   }
 
-  export default Home;
+export default Home;
