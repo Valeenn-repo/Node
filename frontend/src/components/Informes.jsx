@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TopBar from "./TopBar";
 import InformeColeccion from './InformeColeccion';
-import { Button, Paper } from '@mui/material';
+import { Button, Paper, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 
@@ -42,8 +42,10 @@ function Informes() {
             <TopBar />
             <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
                 <Typography align="center">
-                    <Button variant="contained" onClick={handleClick}>Generar Informe</Button>
-                </Typography>
+                    <Tooltip title="Crear tabla" placement="right-start" arrow>
+                        <Button variant="contained" onClick={handleClick}>Generar Informe</Button>
+                    </Tooltip>
+                </Typography>  
             </Paper>
             {variable && 
                 <Paper elevation={15} style={{ background:'#FFF', padding: '20px', marginTop: '20px' }}>

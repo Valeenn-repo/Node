@@ -1,7 +1,7 @@
 //Valentín Sánchez López
 import React, { useState } from 'react';
 import Button from '@mui/material/Button'
-import {Box} from '@mui/material';
+import {Box, Tooltip} from '@mui/material';
 import {TextField } from '@mui/material';
 import { Typography } from '@mui/material';
 
@@ -109,15 +109,17 @@ const handleLogin = (e) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt:3 }}
-                onClick={handleLogin}
-              >
-                Iniciar Sesión
-              </Button>
+              <Tooltip title="Acceder" arrow>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt:3 }}
+                  onClick={handleLogin}
+                >
+                  Iniciar Sesión
+                </Button>
+              </Tooltip>
             </Box>
           </Box>
         </Paper>

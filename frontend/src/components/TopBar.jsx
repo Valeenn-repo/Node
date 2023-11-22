@@ -1,6 +1,6 @@
 import React, {useEffect } from 'react';
 import Button from '@mui/material/Button';
-import { Container } from '@mui/material';
+import { Container, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import AppBar from '@mui/material/AppBar';
@@ -42,12 +42,23 @@ const TopBar = () => {
                 <Typography variant="h6">{userData.userName}</Typography>
               </Grid>
               <Grid item xs={6} sm={6} md={4} lg={4} container justifyContent="space-around">
-                <Link to='/home'>Inicio</Link>
-                <Link to='/help'>Ayuda</Link>
-                {userRole === 'admin' && <Link to='/informes'>Informes</Link>}
+                <Tooltip title="Página principal" placement="left-start" arrow>
+                  <Link to='/home'>Inicio</Link>
+                </Tooltip>
+                <Tooltip title="Manual de ayuda" arrow>
+                  <Link to='/Sánchez_López_Valentín_EXUT4_Manual.pdf' target='_blank'>Ayuda</Link>
+                </Tooltip>
+                {
+                userRole === 'admin' &&
+                <Tooltip title="Informes de datos" placement="right-start" arrow>
+                  <Link to='/informes'>Informes</Link>
+                </Tooltip>
+                }
               </Grid>
               <Grid item xs={6} sm={3} md={2} lg={2} container justifyContent="flex-end">
-                <Button variant="contained" onClick={salir}>Salir</Button>
+                <Tooltip title="Cerrar sesión" placement="right-start" arrow>
+                  <Button variant="contained" onClick={salir}>Salir</Button>
+                </Tooltip>
               </Grid>
             </Grid>
           </Toolbar>
