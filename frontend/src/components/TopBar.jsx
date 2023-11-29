@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { loginActions } from '../store/storelogin';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 
 const TopBar = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const TopBar = () => {
               <Grid item xs={6} sm={2} container alignItems="center">
                 {userRole === 'user' && <PermIdentityIcon />}
                 {userRole === 'admin' && <AdminPanelSettingsIcon />}
+                {userRole === 'invitado' && <InsertEmoticonIcon />}
                 <Typography variant="h6">{userData.userName}</Typography>
               </Grid>
               <Grid item xs={6} sm={6} md={4} lg={4} container justifyContent="space-around">
@@ -50,8 +52,14 @@ const TopBar = () => {
                 </Tooltip>
                 {
                 userRole === 'admin' &&
-                <Tooltip title="Informes de datos" placement="right-start" arrow>
+                <Tooltip title="Informes de datos" arrow>
                   <Link to='/informes'>Informes</Link>
+                </Tooltip>
+                }
+                {
+                userRole === 'admin' &&
+                <Tooltip title="Usuarios" placement="right-start" arrow>
+                  <Link to='/usuarios'>Gestión Usuarios</Link>
                 </Tooltip>
                 }
               </Grid>

@@ -62,7 +62,7 @@ import TopBar from './TopBar';
     
     
 
-    // En el componente Home
+  // En el componente Home
   const [items, setItems] = useState([]); // Estado para almacenar los datos obtenidos
 
   useEffect(() => {
@@ -183,55 +183,57 @@ import TopBar from './TopBar';
           </Container>
         </AppBar>
                 */}
-        <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
-          <Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label='Nombre'
-                  name="nombre"
-                  required
-                  value={formValues.nombre}
-                  onChange={handleInputChange}
-                />
+        {!(userRole === 'invitado') &&
+          <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+            <Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label='Nombre'
+                    name="nombre"
+                    required
+                    value={formValues.nombre}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label='Marca'
+                    name="marca"
+                    value={formValues.marca}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label='Tipo'
+                    name="tipo"
+                    value={formValues.tipo}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label='Precio'
+                    name="precio"
+                    value={formValues.precio}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Tooltip title="Insertar campos" placement="right-start" arrow>
+                    <Button variant="contained" type="submit">
+                      Guardar
+                    </Button>
+                  </Tooltip>
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label='Marca'
-                  name="marca"
-                  value={formValues.marca}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label='Tipo'
-                  name="tipo"
-                  value={formValues.tipo}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label='Precio'
-                  name="precio"
-                  value={formValues.precio}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <Tooltip title="Insertar campos" placement="right-start" arrow>
-                  <Button variant="contained" type="submit">
-                    Guardar
-                  </Button>
-                </Tooltip>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
+            </Box>
+          </Paper>
+        }
       
         <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
-      <Grid container spacing={2}>
+        <Grid container spacing={2}>
         <Grid item xs={3}>
           <Typography variant="h5">Nombre</Typography>
         </Grid>

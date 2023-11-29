@@ -65,10 +65,39 @@ app.get('/addItem', async function(req, res, next) {
     }
 });
 
+app.get('/addItemUser', async function(req, res, next) {
+    console.log(req.query)
+    try {
+        const data = {
+            id: req.query.id,
+            nombre: req.query.nombre,
+            login: req.query.login,
+            password: req.query.password,
+            rol: req.query.rol
+        };
+        console.log(data);
+        res.json(await item.insertDataUser(data));
+    } catch (err) {
+        console.error(`Error while inserting items `, err.message);
+        next(err);
+    }
+});
+
 // En tu archivo index.js o donde tengas tus rutas en el backend
 app.get('/getItems', async function(req, res, next) {
     try {
         const items = await item.getData(); // Método para obtener todos los datos de la tabla
+        res.json(items); // Enviar los datos obtenidos como respuesta
+    } catch (err) {
+        console.error(`Error while fetching items `, err.message);
+        next(err);
+    }
+});
+
+// En tu archivo index.js o donde tengas tus rutas en el backend
+app.get('/getItemsUser', async function(req, res, next) {
+    try {
+        const items = await item.getDataUser(); // Método para obtener todos los datos de la tabla
         res.json(items); // Enviar los datos obtenidos como respuesta
     } catch (err) {
         console.error(`Error while fetching items `, err.message);
