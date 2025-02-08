@@ -1,0 +1,21 @@
+==== CONFIGS ====		
+{
+    "base_path": "d:\\ReactPro\\coleccion-valentin_\\frontend",
+    "out": "d:\\ReactPro\\coleccion-valentin_\\frontend\\javadoc",
+    "javadoc_executable": "C:\\Program Files\\Java\\jdk-19\\bin\\javadoc.exe",
+    "exclude": [],
+    "raw_params": ""
+}
+
+==== COMMAND ====
+"C:\Program Files\Java\jdk-19\bin\javadoc.exe" 
+	-sourcepath "d:\ReactPro\coleccion-valentin_\frontend" 
+	-d "d:\ReactPro\coleccion-valentin_\frontend\javadoc" 
+	
+
+
+==== JAVADOC OUTPUT ====
+error: No modules, packages or classes specified.
+1 error
+
+

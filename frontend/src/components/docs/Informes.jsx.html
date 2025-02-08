@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Informes.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Informes.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import TopBar from "./TopBar";
+import InformeColeccion from './InformeColeccion';
+import InformeUsuarios from './InformeUsuarios';
+import { Button, Paper, Tooltip } from '@mui/material';
+import Typography from '@mui/material/Typography';
+
+/**
+ * @description Componente que gestiona la visualización de informes de colección y usuarios.
+ */
+function Informes() {
+  /**
+   * @description Estado para almacenar los datos de la colección.
+   */
+  const [items, setItems] = useState([]);
+  /**
+   * @description Estado para almacenar los datos de los usuarios.
+   */
+  const [itemsUser, setItemsUser] = useState([]);
+
+  /**
+   * @description Estado para controlar la visibilidad del informe de colección.
+   */
+  const [variable, setVariable] = useState(false);
+  /**
+   * @description Estado para controlar la visibilidad del informe de usuarios.
+   */
+  const [variableUser, setVariableUser] = useState(false);
+
+  /**
+   * @description Función para mostrar el informe de colección.
+   */
+  const handleClick = () => {
+    setVariable(true);
+  };
+
+  /**
+   * @description Función para mostrar el informe de usuarios y cargar los datos.
+   */
+  const handleClickUser = () => {
+    setVariableUser(true);
+    recuperarUsuarios();
+  };
+
+  /**
+   * @description Función para obtener los datos de los usuarios desde el servidor.
+   */
+  const recuperarUsuarios = () => {
+    fetch('http://localhost:3030/getItemsUser')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados (usuarios): ", data);
+        if (Array.isArray(data.data)) {
+          setItemsUser(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos de usuarios:', error);
+      });
+  };
+
+  /**
+   * @description Efecto secundario para cargar los datos de la colección al montar el componente.
+   */
+  useEffect(() => {
+    fetch('http://localhost:3030/getItems')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados (colección): ", data);
+        if (Array.isArray(data.data)) {
+          setItems(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos de la colección:', error);
+      });
+  }, []);
+
+  return (
+    &lt;>
+      &lt;TopBar />
+      &lt;Paper elevation={3} style={{ padding: '50px', marginTop: '20px' }}>
+        &lt;Typography align="center" style={{ marginBottom: '25px' }}>
+          &lt;Tooltip title="Generar informe de colección" placement="right-start" arrow>
+            &lt;Button variant="contained" onClick={handleClick}>
+              Generar Informe Coleccion
+            &lt;/Button>
+          &lt;/Tooltip>
+        &lt;/Typography>
+
+        &lt;Typography align="center" style={{ marginBottom: '25px' }}>
+          &lt;Tooltip title="Generar informe de usuarios" placement="right-start" arrow>
+            &lt;Button variant="contained" onClick={handleClickUser}>
+              Generar Informe Usuarios
+            &lt;/Button>
+          &lt;/Tooltip>
+        &lt;/Typography>
+      &lt;/Paper>
+
+      {/* Condicional para mostrar los informes */}
+      {(variableUser || variable) &amp;&amp; (
+        &lt;Paper elevation={15} style={{ background: '#FFF', padding: '20px', marginTop: '20px' }}>
+          {variable &amp;&amp; &lt;InformeColeccion datos={items} />}
+          {variableUser &amp;&amp; &lt;InformeUsuarios datos={itemsUser} />}
+        &lt;/Paper>
+      )}
+    &lt;/>
+  );
+}
+
+export default Informes;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeColeccion">InformeColeccion</a></li><li><a href="global.html#InformeUsuarios">InformeUsuarios</a></li><li><a href="global.html#Informes">Informes</a></li><li><a href="global.html#LoginService">LoginService</a></li><li><a href="global.html#Toolbar">Toolbar</a></li><li><a href="global.html#Usuarios">Usuarios</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Feb 08 2025 11:50:35 GMT+0000 (hora estándar de Europa occidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

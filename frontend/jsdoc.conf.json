@@ -1,0 +1,8 @@
+{
+    "opts": {
+      "template": "default",
+      "destination": "./src/components/docs",
+      "recurse": true
+    }
+  }
+  

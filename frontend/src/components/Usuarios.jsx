@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TopBar from "./TopBar"
+import TopBar from "./TopBar";
 import { Box, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -7,9 +7,14 @@ import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-
+/**
+ * @description Componente para la gestión de usuarios. Permite agregar y ver usuarios.
+ */
 function Usuarios() {
 
+  /**
+   * @description Estado para los valores del formulario de usuario.
+   */
   const [formValues, setFormValues] = useState({
     id: '',
     nombre: '',
@@ -18,6 +23,10 @@ function Usuarios() {
     rol: ''
   });
 
+  /**
+   * @description Maneja los cambios en los campos del formulario.
+   * @param {object} e El evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues(prevState => ({
@@ -26,26 +35,38 @@ function Usuarios() {
     }));
   };
 
-
-
+  /**
+   * @description Estado para almacenar la lista de usuarios.
+   */
   const [items, setItems] = useState([]);
 
+  /**
+   * @description Efecto secundario para cargar los usuarios al montar el componente.
+   */
   useEffect(() => {
-    fetch('http://localhost:3030/getItemsUser')
-    .then(response => response.json())
-    .then(data => {
-      console.log("Prueba")
-      console.log("Datos recuperados: ", data);
-      if (Array.isArray(data.data)) {
-        setItems(data.data); // Si 'data' es un array, actualizar 'items'
-      }
-    })
-    .catch(error => {
-      console.error('Error al obtener los datos:', error);
-      // Manejar errores o mostrar mensajes de error
-    });
+    fetchUsers();
   }, []);
 
+  /**
+   * @description Función para obtener los usuarios del servidor.
+   */
+  const fetchUsers = () => {
+    fetch('http://localhost:3030/getItemsUser')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados (usuarios): ", data);
+        if (Array.isArray(data.data)) {
+          setItems(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos de usuarios:', error);
+      });
+  };
+
+  /**
+   * @description Realiza la solicitud POST para agregar un nuevo usuario.
+   */
   const realizarCons = () => {
     const { id, nombre, login, password, rol } = formValues;
     console.log(id, nombre, login, password, rol);
@@ -54,46 +75,32 @@ function Usuarios() {
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        console.log('Datos insertados:', data);
+        console.log('Datos insertados (usuario):', data);
         alert("Datos insertados con éxito");
-
-        // Obtener datos actualizados después de la inserción
-        fetch('http://localhost:3030/getItemsUser')
-          .then(response => response.json())
-          .then(data => {
-            console.log("Datos recuperados después de la inserción: ", data);
-            if (Array.isArray(data.data)) {
-              setItems(data.data); // Actualizar 'items' con los datos insertados
-            }
-          })
-          .catch(error => {
-            console.error('Error al obtener los datos después de la inserción:', error);
-            // Manejar errores o mostrar mensajes de error
-          });
-
+        fetchUsers(); // Actualiza la lista de usuarios después de la inserción
       })
       .catch(error => {
-        console.error('Error al insertar datos:', error);
-        // Manejar errores o mostrar mensajes de error
+        console.error('Error al insertar datos de usuario:', error);
       });
   };
 
-
+  /**
+   * @description Maneja el envío del formulario para guardar un nuevo usuario.
+   * @param {object} event El evento de envío del formulario.
+   */
   const handleSaveItem = (event) => {
     event.preventDefault();
     console.log(formValues);
-    realizarCons(); // Realizar la solicitud GET con los valores del formulario
+    realizarCons();
 
-    // Limpiar los campos
     setFormValues({
       id: '',
       nombre: '',
-      marca: '',
-      tipo: '',
-      precio: '',
+      login: '',
+      password: '',
+      rol: ''
     });
   };
-
 
   return (
     <>
@@ -102,43 +109,20 @@ function Usuarios() {
         <Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
-              <TextField
-                label='Nombre'
-                name="nombre"
-                required
-                value={formValues.nombre}
-                onChange={handleInputChange}
-              />
+              <TextField label='Nombre' name="nombre" required value={formValues.nombre} onChange={handleInputChange} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <TextField
-                label='Login'
-                name="login"
-                value={formValues.marca}
-                onChange={handleInputChange}
-              />
+              <TextField label='Login' name="login" value={formValues.login} onChange={handleInputChange} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <TextField
-                label='Password'
-                name="password"
-                value={formValues.tipo}
-                onChange={handleInputChange}
-              />
+              <TextField label='Password' name="password" value={formValues.password} onChange={handleInputChange} />
             </Grid>
             <Grid item xs={12} md={3}>
-              <TextField
-                label='Rol'
-                name="rol"
-                value={formValues.precio}
-                onChange={handleInputChange}
-              />
+              <TextField label='Rol' name="rol" value={formValues.rol} onChange={handleInputChange} />
             </Grid>
             <Grid item xs={12}>
               <Tooltip title="Insertar campos" placement="right-start" arrow>
-                <Button variant="contained" type="submit">
-                  Guardar
-                </Button>
+                <Button variant="contained" type="submit">Guardar</Button>
               </Tooltip>
             </Grid>
           </Grid>
@@ -147,42 +131,25 @@ function Usuarios() {
 
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <Typography variant="h5">Nombre</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5">Login</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5">Password</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5">Rol</Typography>
-          </Grid>
+          <Grid item xs={3}><Typography variant="h5">Nombre</Typography></Grid>
+          <Grid item xs={3}><Typography variant="h5">Login</Typography></Grid>
+          <Grid item xs={3}><Typography variant="h5">Password</Typography></Grid>
+          <Grid item xs={3}><Typography variant="h5">Rol</Typography></Grid>
           {items.map((item) => (
             <Grid container item spacing={2} key={item.id}>
-              <Grid item xs={3}>
-                <Typography color="secondary" variant="body1">{item.nombre}</Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography color="secondary" variant="body1">{item.login}</Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography color="secondary" variant="body1">{item.password}</Typography>
-              </Grid>
+              <Grid item xs={3}><Typography color="secondary" variant="body1">{item.nombre}</Typography></Grid>
+              <Grid item xs={3}><Typography color="secondary" variant="body1">{item.login}</Typography></Grid>
+              <Grid item xs={3}><Typography color="secondary" variant="body1">{item.password}</Typography></Grid>
               <Grid container item xs={3} alignItems="center" spacing={1}>
-                <Grid item xs={8}>
-                  <Typography color="secondary" variant="body1">{item.rol}</Typography>
-                </Grid>
-                <Grid item xs={4}>
-                </Grid>
+                <Grid item xs={8}><Typography color="secondary" variant="body1">{item.rol}</Typography></Grid>
+                <Grid item xs={4}></Grid> {/* Espacio para futuras acciones */}
               </Grid>
             </Grid>
           ))}
         </Grid>
       </Paper>
     </>
-  )
+  );
 }
 
 export default Usuarios;

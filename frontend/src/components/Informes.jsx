@@ -5,99 +5,107 @@ import InformeUsuarios from './InformeUsuarios';
 import { Button, Paper, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
-
+/**
+ * @description Componente que gestiona la visualización de informes de colección y usuarios.
+ */
 function Informes() {
+  /**
+   * @description Estado para almacenar los datos de la colección.
+   */
+  const [items, setItems] = useState([]);
+  /**
+   * @description Estado para almacenar los datos de los usuarios.
+   */
+  const [itemsUser, setItemsUser] = useState([]);
 
+  /**
+   * @description Estado para controlar la visibilidad del informe de colección.
+   */
+  const [variable, setVariable] = useState(false);
+  /**
+   * @description Estado para controlar la visibilidad del informe de usuarios.
+   */
+  const [variableUser, setVariableUser] = useState(false);
 
-    const [items, setItems] = useState([]);
-    const [itemsUser, setItemsUser] = useState([])
+  /**
+   * @description Función para mostrar el informe de colección.
+   */
+  const handleClick = () => {
+    setVariable(true);
+  };
 
-    // Estado para almacenar la variable
-    const [variable, setVariable] = useState(false);
-    const [variableUser, setVariableUser] = useState(false);
+  /**
+   * @description Función para mostrar el informe de usuarios y cargar los datos.
+   */
+  const handleClickUser = () => {
+    setVariableUser(true);
+    recuperarUsuarios();
+  };
 
-    // Función para cambiar la variable a true al hacer clic
-    const handleClick = () => {
-        setVariable(true);
-    }
+  /**
+   * @description Función para obtener los datos de los usuarios desde el servidor.
+   */
+  const recuperarUsuarios = () => {
+    fetch('http://localhost:3030/getItemsUser')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados (usuarios): ", data);
+        if (Array.isArray(data.data)) {
+          setItemsUser(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos de usuarios:', error);
+      });
+  };
 
-    // Función para cambiar la variable a true al hacer clic
-    const handleClickUser = () => {
-        setVariableUser(true);
-    }
+  /**
+   * @description Efecto secundario para cargar los datos de la colección al montar el componente.
+   */
+  useEffect(() => {
+    fetch('http://localhost:3030/getItems')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados (colección): ", data);
+        if (Array.isArray(data.data)) {
+          setItems(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos de la colección:', error);
+      });
+  }, []);
 
-    const recuperarUsuarios = () => {
-        fetch('http://localhost:3030/getItemsUser')
-            .then(response => response.json())
-            .then(data => {
-                console.log("Datos recuperados: ", data);
-                if (Array.isArray(data.data)) {
-                    setItemsUser(data.data); // Si 'data' es un array, actualizar 'items'
+  return (
+    <>
+      <TopBar />
+      <Paper elevation={3} style={{ padding: '50px', marginTop: '20px' }}>
+        <Typography align="center" style={{ marginBottom: '25px' }}>
+          <Tooltip title="Generar informe de colección" placement="right-start" arrow>
+            <Button variant="contained" onClick={handleClick}>
+              Generar Informe Coleccion
+            </Button>
+          </Tooltip>
+        </Typography>
 
-                }
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos:', error);
-                // Manejar errores o mostrar mensajes de error
-            });
-    }
+        <Typography align="center" style={{ marginBottom: '25px' }}>
+          <Tooltip title="Generar informe de usuarios" placement="right-start" arrow>
+            <Button variant="contained" onClick={handleClickUser}>
+              Generar Informe Usuarios
+            </Button>
+          </Tooltip>
+        </Typography>
+      </Paper>
 
-    useEffect(() => {
-        fetch('http://localhost:3030/getItems')
-            .then(response => response.json())
-            .then(data => {
-                console.log("Datos recuperados: ", data);
-                if (Array.isArray(data.data)) {
-                    setItems(data.data); // Si 'data' es un array, actualizar 'items'
-
-                }
-            })
-            .catch(error => {
-                console.error('Error al obtener los datos:', error);
-                // Manejar errores o mostrar mensajes de error
-            });
-    }, []);
-
-
-
-
-    return (
-        <>
-            <TopBar />
-            <Paper elevation={3} style={{ padding: '50px', marginTop: '20px' }}>
-                <Typography align="center" style={{ marginBottom: '25px' }}>
-                    <Tooltip title="Crear tabla" placement="right-start" arrow>
-                        <Button variant="contained" onClick={handleClick}>
-                            Generar Informe Coleccion
-                        </Button>
-                    </Tooltip>
-                </Typography>
-
-                <Typography align="center" style={{ marginBottom: '25px' }}>
-                    <Tooltip title="Crear tabla" placement="right-start" arrow>
-                        <Button variant="contained" onClick={() => { handleClickUser(); recuperarUsuarios(); }}>
-                            Generar Informe Usuarios
-                        </Button>
-                    </Tooltip>
-                </Typography>
-            </Paper>
-
-            {
-                (variableUser || variable) && (
-                    <Paper elevation={15} style={{ background: '#FFF', padding: '20px', marginTop: '20px' }}>
-                        {variable &&
-                            <InformeColeccion datos={items} />
-                        }
-                        {
-                            variableUser &&
-                            <InformeUsuarios datos={itemsUser} />
-                        }
-
-                    </Paper>
-                )
-            }
-        </>
-    );
+      {/* Condicional para mostrar los informes */}
+      {(variableUser || variable) && (
+        <Paper elevation={15} style={{ background: '#FFF', padding: '20px', marginTop: '20px' }}>
+          {variable && <InformeColeccion datos={items} />}
+          {variableUser && <InformeUsuarios datos={itemsUser} />}
+        </Paper>
+      )}
+    </>
+  );
 }
 
 export default Informes;

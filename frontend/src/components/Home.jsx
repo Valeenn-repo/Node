@@ -9,27 +9,20 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
 import TopBar from './TopBar';
 
+/**
+ * @description Componente principal que muestra la página de inicio.
+ * Permite a los usuarios agregar, ver y eliminar elementos.
+ */
 function Home() {
+  /**
+   * @description Obtiene el rol del usuario desde el estado global.
+   * @returns {string} El rol del usuario.
+   */
   const userRole = useSelector(state => state.login.userRol);
 
-  /* const userData = useSelector(state => state.login);
- 
-     const dispatch = useDispatch();
-     const navigate = useNavigate();
-     const isLoggedin = userData.isAutenticated;
-     
-     useEffect(() => {
-       if (!isLoggedin) {
-         navigate('/');
-       }
-     }, [isLoggedin, navigate]);
- 
-     const salir = () => {
-       dispatch(loginActions.logout());
-       navigate('/');
-     };
- */
-
+  /**
+   * @description Estado para los valores del formulario de agregar elemento.
+   */
   const [formValues, setFormValues] = useState({
     nombre: '',
     marca: '',
@@ -37,6 +30,10 @@ function Home() {
     precio: ''
   });
 
+  /**
+   * @description Maneja los cambios en los campos del formulario.
+   * @param {object} e El evento de cambio.
+   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues(prevState => ({
@@ -45,12 +42,16 @@ function Home() {
     }));
   };
 
+  /**
+   * @description Maneja el envío del formulario para guardar un nuevo elemento.
+   * @param {object} event El evento de envío del formulario.
+   */
   const handleSaveItem = (event) => {
     event.preventDefault();
     console.log(formValues);
-    realizarCons(); // Realizar la solicitud GET con los valores del formulario
+    realizarCons(); // Realiza la solicitud POST para guardar el elemento
 
-    // Limpiar los campos
+    // Limpia los campos del formulario después de guardar
     setFormValues({
       nombre: '',
       marca: '',
@@ -59,30 +60,39 @@ function Home() {
     });
   };
 
+  /**
+   * @description Estado para almacenar la lista de elementos.
+   */
+  const [items, setItems] = useState([]);
 
-
-
-  // En el componente Home
-  const [items, setItems] = useState([]); // Estado para almacenar los datos obtenidos
-
+  /**
+   * @description Efecto secundario para cargar los elementos al montar el componente.
+   */
   useEffect(() => {
+    fetchItems();
+  }, []);
+
+  /**
+   * @description Función para obtener los elementos del servidor.
+   */
+  const fetchItems = () => {
     fetch('http://localhost:3030/getItems')
       .then(response => response.json())
       .then(data => {
         console.log("Datos recuperados: ", data);
         if (Array.isArray(data.data)) {
-          setItems(data.data); // Si 'data' es un array, actualizar 'items'
-
+          setItems(data.data);
         }
       })
       .catch(error => {
         console.error('Error al obtener los datos:', error);
-        // Manejar errores o mostrar mensajes de error
       });
-  }, []);
+  };
 
 
-
+  /**
+   * @description Realiza la solicitud POST para agregar un nuevo elemento.
+   */
   const realizarCons = () => {
     const { nombre, marca, tipo, precio } = formValues;
     console.log(nombre, marca, tipo, precio);
@@ -93,184 +103,88 @@ function Home() {
       .then(data => {
         console.log('Datos insertados:', data);
         alert("Datos insertados con éxito");
-
-        // Obtener datos actualizados después de la inserción
-        fetch('http://localhost:3030/getItems')
-          .then(response => response.json())
-          .then(data => {
-            console.log("Datos recuperados después de la inserción: ", data);
-            if (Array.isArray(data.data)) {
-              setItems(data.data); // Actualizar 'items' con los datos insertados
-            }
-          })
-          .catch(error => {
-            console.error('Error al obtener los datos después de la inserción:', error);
-            // Manejar errores o mostrar mensajes de error
-          });
-
+        fetchItems(); // Actualiza la lista de elementos después de la inserción
       })
       .catch(error => {
         console.error('Error al insertar datos:', error);
-        // Manejar errores o mostrar mensajes de error
       });
   };
 
-  /*const realizarCons = () => {
-    const { nombre, marca, tipo, precio } = formValues;
-    console.log(nombre, marca, tipo, precio);
-    const url = `http://localhost:3030/addItem?nombre=${nombre}&marca=${marca}&tipo=${tipo}&precio=${precio}`;
-
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Datos insertados:', data);
-        alert("Datos insertados con éxito");
-
-        
-      })
-      .catch(error => {
-        console.error('Error al insertar datos:', error);
-        // Manejar errores o mostrar mensajes de error
-      });
-};
-*/
-
+  /**
+   * @description Maneja la eliminación de un elemento.
+   * @param {number} itemId El ID del elemento a eliminar.
+   */
   const handleDeleteItem = (itemId) => {
-    // Realiza una solicitud DELETE al servidor para eliminar el elemento con el ID proporcionado
     fetch(`http://localhost:3030/deleteItem?id=${itemId}`)
       .then(response => response.json())
       .then(data => {
         console.log('Elemento eliminado:', data);
-        // Actualiza la lista de elementos después de eliminar uno
         setItems(prevItems => prevItems.filter(item => item.id !== itemId));
         alert("Datos eliminados con éxito");
       })
       .catch(error => {
         console.error('Error al eliminar elemento:', error);
-        // Manejar errores o mostrar mensajes de error
       });
   };
 
   return (
     <>
       <TopBar />
-      {/*
-        <AppBar position='static'>
-          <Container>
-            <Toolbar>
-              <Grid container justifyContent="space-between" alignItems="center">
-                <Grid item xs={6} sm={2} container alignItems="center">
-                  {userRole==='user' &&
-                    <PermIdentityIcon/>
-                  }
-                  {userRole==='admin' &&
-                    <AdminPanelSettingsIcon/>
-                  }
-                  
-                  <Typography variant="h6">{userData.userName}</Typography>
-                </Grid>
-                <Grid item xs={6} sm={6} md={4} lg={4} container justifyContent="space-around">
-                  <Link to='/home'>Inicio</Link>
-                  <Link to='/help'>Ayuda</Link>
-                  {userRole==='admin' &&
-                  <Link to='/informes'>Informes</Link>}
-                </Grid>
-                <Grid item xs={6} sm={3} md={2} lg={2} container justifyContent="flex-end">
-                  <Button variant="contained" onClick={salir}>Salir</Button>
-                </Grid>
-              </Grid>
-            </Toolbar>
-          </Container>
-        </AppBar>
-                */}
-      {!(userRole === 'invitado') &&
+
+      {/* Formulario para agregar elementos (solo visible para usuarios no invitados) */}
+      {!(userRole === 'invitado') && (
         <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
           <Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
             <Grid container spacing={2}>
+              {/* Campos del formulario */}
               <Grid item xs={12} md={3}>
-                <TextField
-                  label='Nombre'
-                  name="nombre"
-                  required
-                  value={formValues.nombre}
-                  onChange={handleInputChange}
-                />
+                <TextField label='Nombre' name="nombre" required value={formValues.nombre} onChange={handleInputChange} />
               </Grid>
               <Grid item xs={12} md={3}>
-                <TextField
-                  label='Marca'
-                  name="marca"
-                  value={formValues.marca}
-                  onChange={handleInputChange}
-                />
+                <TextField label='Marca' name="marca" value={formValues.marca} onChange={handleInputChange} />
               </Grid>
               <Grid item xs={12} md={3}>
-                <TextField
-                  label='Tipo'
-                  name="tipo"
-                  value={formValues.tipo}
-                  onChange={handleInputChange}
-                />
+                <TextField label='Tipo' name="tipo" value={formValues.tipo} onChange={handleInputChange} />
               </Grid>
               <Grid item xs={12} md={3}>
-                <TextField
-                  label='Precio'
-                  name="precio"
-                  value={formValues.precio}
-                  onChange={handleInputChange}
-                />
+                <TextField label='Precio' name="precio" value={formValues.precio} onChange={handleInputChange} />
               </Grid>
               <Grid item xs={12}>
                 <Tooltip title="Insertar campos" placement="right-start" arrow>
-                  <Button variant="contained" type="submit">
-                    Guardar
-                  </Button>
+                  <Button variant="contained" type="submit">Guardar</Button>
                 </Tooltip>
               </Grid>
             </Grid>
           </Box>
         </Paper>
-      }
+      )}
 
+      {/* Lista de elementos */}
       <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
         <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <Typography variant="h5">Nombre</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5">Marca</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5">Tipo</Typography>
-          </Grid>
-          <Grid item xs={3}>
-            <Typography variant="h5">Precio</Typography>
-          </Grid>
+          {/* Encabezados de la tabla */}
+          <Grid item xs={3}><Typography variant="h5">Nombre</Typography></Grid>
+          <Grid item xs={3}><Typography variant="h5">Marca</Typography></Grid>
+          <Grid item xs={3}><Typography variant="h5">Tipo</Typography></Grid>
+          <Grid item xs={3}><Typography variant="h5">Precio</Typography></Grid>
+
+          {/* Mapeo de los elementos */}
           {items.map((item) => (
             <Grid container item spacing={2} key={item.id}>
-              <Grid item xs={3}>
-                <Typography color="secondary" variant="body1">{item.nombre}</Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography color="secondary" variant="body1">{item.marca}</Typography>
-              </Grid>
-              <Grid item xs={3}>
-                <Typography color="secondary" variant="body1">{item.tipo}</Typography>
-              </Grid>
+              <Grid item xs={3}><Typography color="secondary" variant="body1">{item.nombre}</Typography></Grid>
+              <Grid item xs={3}><Typography color="secondary" variant="body1">{item.marca}</Typography></Grid>
+              <Grid item xs={3}><Typography color="secondary" variant="body1">{item.tipo}</Typography></Grid>
               <Grid container item xs={3} alignItems="center" spacing={1}>
-                <Grid item xs={8}>
-                  <Typography color="secondary" variant="body1">{item.precio}</Typography>
-                </Grid>
+                <Grid item xs={8}><Typography color="secondary" variant="body1">{item.precio}</Typography></Grid>
                 <Grid item xs={4}>
-                  {userRole === 'admin' &&
+                  {/* Botón de eliminar (solo visible para administradores) */}
+                  {userRole === 'admin' && (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <Tooltip title="Eliminar" arrow>
-                        <DeleteIcon
-                          onClick={() => handleDeleteItem(item.id)}
-                          style={{ cursor: 'pointer' }}
-                        />
+                        <DeleteIcon onClick={() => handleDeleteItem(item.id)} style={{ cursor: 'pointer' }} />
                       </Tooltip>
-                    </div>}
+                    </div>
+                  )}
                 </Grid>
               </Grid>
             </Grid>

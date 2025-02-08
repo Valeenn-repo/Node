@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Home.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Home.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import Button from '@mui/material/Button';
+import { Box, TextField } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { useSelector } from 'react-redux';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Tooltip from '@mui/material/Tooltip';
+import TopBar from './TopBar';
+
+/**
+ * @description Componente principal que muestra la página de inicio.
+ * Permite a los usuarios agregar, ver y eliminar elementos.
+ */
+function Home() {
+  /**
+   * @description Obtiene el rol del usuario desde el estado global.
+   * @returns {string} El rol del usuario.
+   */
+  const userRole = useSelector(state => state.login.userRol);
+
+  /**
+   * @description Estado para los valores del formulario de agregar elemento.
+   */
+  const [formValues, setFormValues] = useState({
+    nombre: '',
+    marca: '',
+    tipo: '',
+    precio: ''
+  });
+
+  /**
+   * @description Maneja los cambios en los campos del formulario.
+   * @param {object} e El evento de cambio.
+   */
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  /**
+   * @description Maneja el envío del formulario para guardar un nuevo elemento.
+   * @param {object} event El evento de envío del formulario.
+   */
+  const handleSaveItem = (event) => {
+    event.preventDefault();
+    console.log(formValues);
+    realizarCons(); // Realiza la solicitud POST para guardar el elemento
+
+    // Limpia los campos del formulario después de guardar
+    setFormValues({
+      nombre: '',
+      marca: '',
+      tipo: '',
+      precio: '',
+    });
+  };
+
+  /**
+   * @description Estado para almacenar la lista de elementos.
+   */
+  const [items, setItems] = useState([]);
+
+  /**
+   * @description Efecto secundario para cargar los elementos al montar el componente.
+   */
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  /**
+   * @description Función para obtener los elementos del servidor.
+   */
+  const fetchItems = () => {
+    fetch('http://localhost:3030/getItems')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados: ", data);
+        if (Array.isArray(data.data)) {
+          setItems(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos:', error);
+      });
+  };
+
+
+  /**
+   * @description Realiza la solicitud POST para agregar un nuevo elemento.
+   */
+  const realizarCons = () => {
+    const { nombre, marca, tipo, precio } = formValues;
+    console.log(nombre, marca, tipo, precio);
+    const url = `http://localhost:3030/addItem?nombre=${nombre}&amp;marca=${marca}&amp;tipo=${tipo}&amp;precio=${precio}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Datos insertados:', data);
+        alert("Datos insertados con éxito");
+        fetchItems(); // Actualiza la lista de elementos después de la inserción
+      })
+      .catch(error => {
+        console.error('Error al insertar datos:', error);
+      });
+  };
+
+  /**
+   * @description Maneja la eliminación de un elemento.
+   * @param {number} itemId El ID del elemento a eliminar.
+   */
+  const handleDeleteItem = (itemId) => {
+    fetch(`http://localhost:3030/deleteItem?id=${itemId}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Elemento eliminado:', data);
+        setItems(prevItems => prevItems.filter(item => item.id !== itemId));
+        alert("Datos eliminados con éxito");
+      })
+      .catch(error => {
+        console.error('Error al eliminar elemento:', error);
+      });
+  };
+
+  return (
+    &lt;>
+      &lt;TopBar />
+
+      {/* Formulario para agregar elementos (solo visible para usuarios no invitados) */}
+      {!(userRole === 'invitado') &amp;&amp; (
+        &lt;Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+          &lt;Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
+            &lt;Grid container spacing={2}>
+              {/* Campos del formulario */}
+              &lt;Grid item xs={12} md={3}>
+                &lt;TextField label='Nombre' name="nombre" required value={formValues.nombre} onChange={handleInputChange} />
+              &lt;/Grid>
+              &lt;Grid item xs={12} md={3}>
+                &lt;TextField label='Marca' name="marca" value={formValues.marca} onChange={handleInputChange} />
+              &lt;/Grid>
+              &lt;Grid item xs={12} md={3}>
+                &lt;TextField label='Tipo' name="tipo" value={formValues.tipo} onChange={handleInputChange} />
+              &lt;/Grid>
+              &lt;Grid item xs={12} md={3}>
+                &lt;TextField label='Precio' name="precio" value={formValues.precio} onChange={handleInputChange} />
+              &lt;/Grid>
+              &lt;Grid item xs={12}>
+                &lt;Tooltip title="Insertar campos" placement="right-start" arrow>
+                  &lt;Button variant="contained" type="submit">Guardar&lt;/Button>
+                &lt;/Tooltip>
+              &lt;/Grid>
+            &lt;/Grid>
+          &lt;/Box>
+        &lt;/Paper>
+      )}
+
+      {/* Lista de elementos */}
+      &lt;Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+        &lt;Grid container spacing={2}>
+          {/* Encabezados de la tabla */}
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Nombre&lt;/Typography>&lt;/Grid>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Marca&lt;/Typography>&lt;/Grid>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Tipo&lt;/Typography>&lt;/Grid>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Precio&lt;/Typography>&lt;/Grid>
+
+          {/* Mapeo de los elementos */}
+          {items.map((item) => (
+            &lt;Grid container item spacing={2} key={item.id}>
+              &lt;Grid item xs={3}>&lt;Typography color="secondary" variant="body1">{item.nombre}&lt;/Typography>&lt;/Grid>
+              &lt;Grid item xs={3}>&lt;Typography color="secondary" variant="body1">{item.marca}&lt;/Typography>&lt;/Grid>
+              &lt;Grid item xs={3}>&lt;Typography color="secondary" variant="body1">{item.tipo}&lt;/Typography>&lt;/Grid>
+              &lt;Grid container item xs={3} alignItems="center" spacing={1}>
+                &lt;Grid item xs={8}>&lt;Typography color="secondary" variant="body1">{item.precio}&lt;/Typography>&lt;/Grid>
+                &lt;Grid item xs={4}>
+                  {/* Botón de eliminar (solo visible para administradores) */}
+                  {userRole === 'admin' &amp;&amp; (
+                    &lt;div style={{ display: 'flex', alignItems: 'center' }}>
+                      &lt;Tooltip title="Eliminar" arrow>
+                        &lt;DeleteIcon onClick={() => handleDeleteItem(item.id)} style={{ cursor: 'pointer' }} />
+                      &lt;/Tooltip>
+                    &lt;/div>
+                  )}
+                &lt;/Grid>
+              &lt;/Grid>
+            &lt;/Grid>
+          ))}
+        &lt;/Grid>
+      &lt;/Paper>
+    &lt;/>
+  );
+}
+
+export default Home;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeColeccion">InformeColeccion</a></li><li><a href="global.html#InformeUsuarios">InformeUsuarios</a></li><li><a href="global.html#Informes">Informes</a></li><li><a href="global.html#LoginService">LoginService</a></li><li><a href="global.html#Toolbar">Toolbar</a></li><li><a href="global.html#Usuarios">Usuarios</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Feb 08 2025 11:50:35 GMT+0000 (hora estándar de Europa occidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Usuarios.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Usuarios.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import TopBar from "./TopBar";
+import { Box, TextField } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Tooltip from '@mui/material/Tooltip';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+
+/**
+ * @description Componente para la gestión de usuarios. Permite agregar y ver usuarios.
+ */
+function Usuarios() {
+
+  /**
+   * @description Estado para los valores del formulario de usuario.
+   */
+  const [formValues, setFormValues] = useState({
+    id: '',
+    nombre: '',
+    login: '',
+    password: '',
+    rol: ''
+  });
+
+  /**
+   * @description Maneja los cambios en los campos del formulario.
+   * @param {object} e El evento de cambio.
+   */
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  /**
+   * @description Estado para almacenar la lista de usuarios.
+   */
+  const [items, setItems] = useState([]);
+
+  /**
+   * @description Efecto secundario para cargar los usuarios al montar el componente.
+   */
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  /**
+   * @description Función para obtener los usuarios del servidor.
+   */
+  const fetchUsers = () => {
+    fetch('http://localhost:3030/getItemsUser')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Datos recuperados (usuarios): ", data);
+        if (Array.isArray(data.data)) {
+          setItems(data.data);
+        }
+      })
+      .catch(error => {
+        console.error('Error al obtener los datos de usuarios:', error);
+      });
+  };
+
+  /**
+   * @description Realiza la solicitud POST para agregar un nuevo usuario.
+   */
+  const realizarCons = () => {
+    const { id, nombre, login, password, rol } = formValues;
+    console.log(id, nombre, login, password, rol);
+    const url = `http://localhost:3030/addItemUser?id=${id}&amp;nombre=${nombre}&amp;login=${login}&amp;password=${password}&amp;rol=${rol}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Datos insertados (usuario):', data);
+        alert("Datos insertados con éxito");
+        fetchUsers(); // Actualiza la lista de usuarios después de la inserción
+      })
+      .catch(error => {
+        console.error('Error al insertar datos de usuario:', error);
+      });
+  };
+
+  /**
+   * @description Maneja el envío del formulario para guardar un nuevo usuario.
+   * @param {object} event El evento de envío del formulario.
+   */
+  const handleSaveItem = (event) => {
+    event.preventDefault();
+    console.log(formValues);
+    realizarCons();
+
+    setFormValues({
+      id: '',
+      nombre: '',
+      login: '',
+      password: '',
+      rol: ''
+    });
+  };
+
+  return (
+    &lt;>
+      &lt;TopBar />
+      &lt;Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+        &lt;Box component='form' autoComplete='off' onSubmit={handleSaveItem}>
+          &lt;Grid container spacing={2}>
+            &lt;Grid item xs={12} md={3}>
+              &lt;TextField label='Nombre' name="nombre" required value={formValues.nombre} onChange={handleInputChange} />
+            &lt;/Grid>
+            &lt;Grid item xs={12} md={3}>
+              &lt;TextField label='Login' name="login" value={formValues.login} onChange={handleInputChange} />
+            &lt;/Grid>
+            &lt;Grid item xs={12} md={3}>
+              &lt;TextField label='Password' name="password" value={formValues.password} onChange={handleInputChange} />
+            &lt;/Grid>
+            &lt;Grid item xs={12} md={3}>
+              &lt;TextField label='Rol' name="rol" value={formValues.rol} onChange={handleInputChange} />
+            &lt;/Grid>
+            &lt;Grid item xs={12}>
+              &lt;Tooltip title="Insertar campos" placement="right-start" arrow>
+                &lt;Button variant="contained" type="submit">Guardar&lt;/Button>
+              &lt;/Tooltip>
+            &lt;/Grid>
+          &lt;/Grid>
+        &lt;/Box>
+      &lt;/Paper>
+
+      &lt;Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+        &lt;Grid container spacing={2}>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Nombre&lt;/Typography>&lt;/Grid>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Login&lt;/Typography>&lt;/Grid>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Password&lt;/Typography>&lt;/Grid>
+          &lt;Grid item xs={3}>&lt;Typography variant="h5">Rol&lt;/Typography>&lt;/Grid>
+          {items.map((item) => (
+            &lt;Grid container item spacing={2} key={item.id}>
+              &lt;Grid item xs={3}>&lt;Typography color="secondary" variant="body1">{item.nombre}&lt;/Typography>&lt;/Grid>
+              &lt;Grid item xs={3}>&lt;Typography color="secondary" variant="body1">{item.login}&lt;/Typography>&lt;/Grid>
+              &lt;Grid item xs={3}>&lt;Typography color="secondary" variant="body1">{item.password}&lt;/Typography>&lt;/Grid>
+              &lt;Grid container item xs={3} alignItems="center" spacing={1}>
+                &lt;Grid item xs={8}>&lt;Typography color="secondary" variant="body1">{item.rol}&lt;/Typography>&lt;/Grid>
+                &lt;Grid item xs={4}>&lt;/Grid> {/* Espacio para futuras acciones */}
+              &lt;/Grid>
+            &lt;/Grid>
+          ))}
+        &lt;/Grid>
+      &lt;/Paper>
+    &lt;/>
+  );
+}
+
+export default Usuarios;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InformeColeccion">InformeColeccion</a></li><li><a href="global.html#InformeUsuarios">InformeUsuarios</a></li><li><a href="global.html#Informes">Informes</a></li><li><a href="global.html#LoginService">LoginService</a></li><li><a href="global.html#Toolbar">Toolbar</a></li><li><a href="global.html#Usuarios">Usuarios</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Feb 08 2025 11:50:35 GMT+0000 (hora estándar de Europa occidental)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
