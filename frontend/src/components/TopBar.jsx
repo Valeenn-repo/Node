@@ -1,4 +1,4 @@
-import React, {useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Button from '@mui/material/Button';
 import { Container, Tooltip } from '@mui/material';
 import Typography from '@mui/material/Typography';
@@ -51,16 +51,16 @@ const TopBar = () => {
                   <Link to='/Sánchez_López_Valentín_EXUT4_Manual.pdf' target='_blank'>Ayuda</Link>
                 </Tooltip>
                 {
-                userRole === 'admin' &&
-                <Tooltip title="Informes de datos" arrow>
-                  <Link to='/informes'>Informes</Link>
-                </Tooltip>
+                  userRole === 'admin' &&
+                  <Tooltip title="Informes de datos" arrow>
+                    <Link to='/informes'>Informes</Link>
+                  </Tooltip>
                 }
                 {
-                userRole === 'admin' &&
-                <Tooltip title="Usuarios" placement="right-start" arrow>
-                  <Link to='/usuarios'>Gestión Usuarios</Link>
-                </Tooltip>
+                  userRole === 'admin' &&
+                  <Tooltip title="Usuarios" placement="right-start" arrow>
+                    <Link to='/usuarios'>Gestión Usuarios</Link>
+                  </Tooltip>
                 }
               </Grid>
               <Grid item xs={6} sm={3} md={2} lg={2} container justifyContent="flex-end">

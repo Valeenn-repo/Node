@@ -1,13 +1,13 @@
 import React from "react";
-import MaterialTable, { MTableToolbar} from "@material-table/core";
+import MaterialTable, { MTableToolbar } from "@material-table/core";
 //Nos permite exportar a CSV y PDF
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
 
 function InformeUsuarios(props) {
   const col = [
-    { title: "Nombre", field: "firstName"},
-    { title: "Login", field: "login" , filtering: false},
-    { title: "Password", field: "password" , filtering: false},
+    { title: "Nombre", field: "firstName" },
+    { title: "Login", field: "login", filtering: false },
+    { title: "Password", field: "password", filtering: false },
     { title: "Rol", field: "rol", filtering: false }
   ];
 
@@ -22,37 +22,37 @@ function InformeUsuarios(props) {
 
   return (
     <div>
-      <MaterialTable title="Usuarios" 
+      <MaterialTable title="Usuarios"
         columns={col}
         data={tableData}
         components={{
-            Toolbar: (props) => (
-              <div style={{ backgroundColor: "#808080" }}>
-                <MTableToolbar {...props} />
-              </div>
-            ),
+          Toolbar: (props) => (
+            <div style={{ backgroundColor: "#808080" }}>
+              <MTableToolbar {...props} />
+            </div>
+          ),
         }}
         options={{
-            columnsButton: true,
-            filtering: true,
-            exportMenu: [
-                {
-                    label: "Export PDF",
-                    exportFunc: (cols, datas) => ExportPdf(cols, datas, "ColeccionPDF"),
-                },
-                {
-                    label: "Export CSV",
-                    exportFunc: (cols, datas) => ExportCsv(cols, datas, "ColeccionCSV"),
-                },                 
-            ],
-                headerStyle: {
-                    backgroundColor: '#000',
-                    color: '#FFF'
-                },
-                cellStyle: {
-                    backgroundColor: '#808080',
-                    color: '#FFF'
-                }
+          columnsButton: true,
+          filtering: true,
+          exportMenu: [
+            {
+              label: "Export PDF",
+              exportFunc: (cols, datas) => ExportPdf(cols, datas, "UsuariosPDF"),
+            },
+            {
+              label: "Export CSV",
+              exportFunc: (cols, datas) => ExportCsv(cols, datas, "UsuariosCSV"),
+            },
+          ],
+          headerStyle: {
+            backgroundColor: '#000',
+            color: '#FFF'
+          },
+          cellStyle: {
+            backgroundColor: '#808080',
+            color: '#FFF'
+          }
         }}
       />
     </div>
